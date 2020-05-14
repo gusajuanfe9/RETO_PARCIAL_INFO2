@@ -29,7 +29,7 @@ int main(){
             break;
         case 3: //Ingresar como administrador
             system("cls");
-            ini_administrador();
+            ini_administrador(inv,com);
             break;
         case 0:
             ban=0;
