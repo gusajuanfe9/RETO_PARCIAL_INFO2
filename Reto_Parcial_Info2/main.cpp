@@ -17,18 +17,18 @@ int main(){
         switch(opcion){
 
         case 1: //Ingresar como usuario
-
+            system("cls");
             ingresar_usu();
 
             break;
 
         case 2: //Registrarse como usuario
-
+            system("cls");
             registrar_usuario();
 
             break;
         case 3: //Ingresar como administrador
-
+            system("cls");
             ini_administrador();
             break;
         case 0:
@@ -46,3 +46,4 @@ int main(){
     g_inventario();
     return 0;
 }
+
