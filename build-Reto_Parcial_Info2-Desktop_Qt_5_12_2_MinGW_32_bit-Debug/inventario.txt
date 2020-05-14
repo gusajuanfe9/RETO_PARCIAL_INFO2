@@ -1,0 +1,9 @@
+1;vasos_plasticos_de_9oz_x9_unds;9;4;7;77335
+2;paquete_de_6_unidades_de_pan_para_perro;6;4;7;17668
+3;salchicha_para_perro_por_20_unidades;20;18;3;36250
+4;paquete_x4_unds_de_carne_para_hamburguesa;4;3;4;43313
+5;bolas_de_salsa_roja_150ml;150;150;3;21600
+6;Paquete_de_maiz_de_500gr;500;500;5;15000
+7;Paquete_de_nachos_100gr;1;1;18;36000
+8;Te_botella;12;12;6;32000
+9;Aji;20;20;5;55555

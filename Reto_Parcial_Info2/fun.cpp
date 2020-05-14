@@ -17,7 +17,16 @@ void text2bin(string texto,bool *cod){ //String a binario y despues a char
         for(int j=0;j<8;j++) cod[8*i+j]=(((s<<j)&0x80)==0x80);
     }
 }
-
+long int str2int(string a){  //String a entero
+    int b,l,d=1,c=0;
+    l=a.length();
+    for(int i=l-1;i>=0;i--){
+        b=a[i]-48;
+        c+=b*d;
+        d*=10;
+    }
+    return c;
+}
 string bin2text(bool *cod,unsigned long long int l){ //array binario a string
     string text="";
     string s;
@@ -100,11 +109,84 @@ void escribir_txt(string texto,string arch){ //Funcion basica para escribir en u
 void ini_administrador() {
 
 }
-void d_inventario(){
-
+void d_inventario(map <int,producto> &inv){
+// Extraer datos del inventario e incluir en un mapa
+    string temp="",name,datos=leer_Txt("inventario.txt");
+    int id,j;
+    int long long temp_int[4];
+    producto a;
+    for(unsigned long int i=0;i<datos.length();i++){
+        j=0;
+        while(i<datos.length()){
+            if(datos[i]==';' || datos[i]=='\n' || i+1==datos.length()){
+                if(i+1==datos.length()) temp.push_back(datos[i]);
+                if(j==0){
+                    inv.insert(pair<int,producto>(str2int(temp),a));
+                    id=str2int(temp);}
+                else if(j==1)
+                    name=temp;
+                else if(j==2)
+                    temp_int[0]=str2int(temp);
+                else if(j==3)
+                    temp_int[1]=str2int(temp);
+                else if(j==4)
+                    temp_int[2]=str2int(temp);
+                else if(j==5)
+                    temp_int[3]=str2int(temp);
+                temp="";
+                if(datos[i]=='\n') break;
+                j++;
+            }
+            else
+                temp.push_back(datos[i]);
+            i++;
+        }
+        inv[id].create(name,temp_int[0],temp_int[1],temp_int[2],temp_int[3]);
+    }
 }
-void d_combos(){
 
+void d_combos(map <int,combo> &com){
+// Extrae la informacion de otro .txt y se pone en un map
+
+    map <int,int> ff;
+    map <int,int>::iterator it;
+    string temp="",name,datos=leer_Txt("combos.txt");
+    combo a;
+    int j,num,cont[2];
+    long long int costo;
+    for(unsigned long int i=0;i<datos.length();i++){
+        j=0;
+        while(i<datos.length()){
+            if(datos[i]==';' || datos[i]=='\n' || i+1==datos.length()){
+                if(i+1==datos.length()) temp.push_back(datos[i]);
+                if(j==0){
+                    com.insert(pair<int,combo>(str2int(temp),a));
+                    num=str2int(temp);}
+                else if(j==1)
+                    name=temp;
+                else if(j==2)
+                    costo=str2int(temp);
+                else{
+                    cont[1]=str2int(temp);
+                    ff.insert(pair<int,int>(cont[0],cont[1]));
+                }
+                temp="";
+                if(datos[i]=='\n') break;
+                j++;
+            }
+            else if (datos[i]=='-'){
+                cont[0]=str2int(temp);
+                temp="";
+            }
+            else
+                temp.push_back(datos[i]);
+            i++;
+        }
+        com[num].ini(name,costo,ff);
+        while(ff.size()!=0){
+            it=ff.begin();
+            ff.erase(it->first);}
+    }
 }
 void ingresar_usu(){
 
@@ -167,7 +249,7 @@ void administrador(map <int,producto> &inv,map <int,combo> &com){
 //Parametros: Maps que contiene el inventario y  los  combos para modificarlos
     short opcion;
     cout<<"INVENTARIO ACTUAL"<<endl<<endl;
-    m_inventario();
+    m_inventario(inv);
     while(true){
         cout<<"Ingrese la opcion que desee: "<<endl,
         cout<<"1)Mostrar los combos del momento"<<endl<<"2)Crear un nuevo combo"<<endl<<"3)Quitar un combo"<<endl<<"4)Mostrar inventario"<<endl;
@@ -177,7 +259,7 @@ void administrador(map <int,producto> &inv,map <int,combo> &com){
         switch(opcion){
         case 1:
             system("cls");
-            m_combos();
+            m_combos(com,inv);
 
             break;
 
@@ -195,13 +277,13 @@ void administrador(map <int,producto> &inv,map <int,combo> &com){
 
         case 4:
             system("cls");
-            m_inventario();
+            m_inventario(inv);
 
             break;
         case 5:
 
             system("cls");
-            m_inventario();
+            m_inventario(inv);
 
             a_productos();
 
@@ -236,10 +318,23 @@ void administrador(map <int,producto> &inv,map <int,combo> &com){
     }
 }
 
-void m_inventario(){
-
+void m_inventario(map <int,producto> inv){
+//Recibe map con inventario para imprimirlo
+    map <int,producto>::iterator ii;
+    cout<<"|N |                     Producto                |cantidad|costo |"<<endl;
+    for(int i=0;i<65;i++) cout<<' ';
+    cout<<endl;
+    for(ii=inv.begin();ii!=inv.end();ii++){
+        if(ii->first<10)
+            cout<<"| "<<ii->first;
+        else
+            cout<<'|'<<ii->first;
+        ii->second.v_produc();
+        cout<<endl;
+        for(int i=0;i<65;i++) cout<<' ';
+        cout<<endl;
+    }
 }
-
 void g_inventario(){
 
 }
@@ -251,8 +346,24 @@ void g_combos(){
 void a_productos(){
 
 }
-void m_combos(){
+void m_combos(map <int,combo> com,map <int,producto> inv){
+//Recibe el map que contiene a los combos y los imprime en una tabla dependiendo si estan o no disponibles
 
+    system("cls");
+    map <int,combo>::iterator ic;
+    for(int i=0;i<62;i++) cout<<' ';
+    cout<<endl;
+    for(ic=com.begin();ic!=com.end();ic++){
+        if(ic->first<10)
+            cout<<"| "<<ic->first;
+        else
+            cout<<'|'<<ic->first;
+        cout<<ic->second.v_combo();
+        if(!(ic->second.disp(inv))) cout<<"producto no disponible por el momento";
+        cout<<endl;
+        for(int i=0;i<62;i++) cout<<' ';
+        cout<<endl;
+    }
 }
 void c_combo(){
 

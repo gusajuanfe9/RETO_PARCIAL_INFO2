@@ -11,6 +11,11 @@ private:
 
 
 public:
+    long long int costo;
+    void create(map <int,producto> inv);
+    void ini(string cont, long long int cost, map <int,int> ff);
+    string v_combo();
+    bool disp(map <int,producto> inv);
 
 
 

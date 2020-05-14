@@ -18,5 +18,10 @@ private:
     string int2str(int long a);
 
 public:
-
+    void create(string name,int uni_p,int uni_a,int canti,int long long costo);
+    void s_produc(int num);
+    void v_produc();
+    void anadir_cant(int can);
+    string guardado();
+    unsigned int disponible;//Variable que determina la disponibilidad del producto
 };
