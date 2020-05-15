@@ -40,3 +40,10 @@ La compra fue realizada por el usuario con identificacion: 1000182850
 El monto pagado fue de 20000
 El pedido fue entrgado en la sala: 6 asiento: B7
 
+14/5/2020   20:21:31
+|Dos_perros_calientes_y_dos_gaseosas               | 35000|
+|Nachos_mas_gaseosa                                | 12000|
+La compra fue realizada por el usuario con identificacion: 1000182850
+El monto pagado fue de 47000
+El pedido fue entrgado en la sala: 7 asiento: B5
+

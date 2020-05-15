@@ -7,7 +7,7 @@ int main(){
     bool ban=1;
 
     map <int,producto> inv; //Map que almacena el inventario de productos (Clave = N del producto y Contenido=objeto de la clase producto, CONTIENE LAS CARAC. DE CADA PRODUCTO).
-    map <int,combo> com; //Mao que almacena los combos disponibles, (Clave = N del combo y Contenido=objeto de la clase combo, CONTIENE LAS CARAC. DE CADA COMBO).
+    map <int,combo> com; //Map que almacena los combos disponibles, (Clave = N del combo y Contenido=objeto de la clase combo, CONTIENE LAS CARAC. DE CADA COMBO).
     d_inventario(inv);
     d_combos(com);
     cout<<endl<<endl<<"BIENVENIDO AL SISTEMA DE ALIMENTOS DE NUESTRO CINE"<<endl<<endl;
@@ -46,4 +46,3 @@ int main(){
     g_inventario(inv);
     return 0;
 }
-

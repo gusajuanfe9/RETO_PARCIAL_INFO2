@@ -1,22 +1,8 @@
 #include "fun.h"
 
-string des(){ //Esta funcion sirve para decodificar la clave del admin. para asi comprobarla con la ingresada (S=4, M=1)
-    string texto;
-    texto=leer_Txt("password.dat");
-    bool *cod= new bool [8*(texto.length())];
-    text2bin(texto,cod);
-    separacion(4,cod,8*(texto.length()),0);
-    texto=bin2text(cod,8*(texto.length()));
-    return texto;
-}
 
-void text2bin(string texto,bool *cod){ //String a binario y despues a char
-    char s;
-    for(unsigned long long int i=0;i<(texto.length());i++){
-        s=char(texto[i]);
-        for(int j=0;j<8;j++) cod[8*i+j]=(((s<<j)&0x80)==0x80);
-    }
-}
+//FUNCIONES PRACTICA 2
+
 void vueltas(int long long a){ //Funcion que controla el manejo de las vueltas de el usuario
     int long long c;
     int long long b[11]={100000, 50000,20000,10000,5000,2000,1000,500,200,100,50};
@@ -28,6 +14,7 @@ void vueltas(int long long a){ //Funcion que controla el manejo de las vueltas d
     }
     cout<<"Falta para completar: "<<a<<endl;
 }
+
 long int str2int(string a){  //String a entero
     int b,l,d=1,c=0;
     l=a.length();
@@ -38,6 +25,57 @@ long int str2int(string a){  //String a entero
     }
     return c;
 }
+
+template <typename t>
+string int2str(t a){ //Entero a string
+    int c=0,i=1;
+    char e;
+    string b;
+    for(;(a/i);i=i*10)
+        c++;
+    for(int j=0;j<c;j++){
+        i/=10;
+        e=(a/i)+48;
+        b.push_back(e);
+        a-=(a/i)*i;
+    }
+    return b;
+}
+
+//FUNCIONES PRACTICA 3
+
+string desifrar(){ //Esta funcion sirve para decodificar la clave del admin. para asi comprobarla con la ingresada (S=5, M=1)
+    string texto;
+    texto=leer_Txt("password.dat");
+    bool *cod= new bool [8*(texto.length())];
+    text2bin(texto,cod);
+    separacion(4,cod,8*(texto.length()),0);
+    texto=bin2text(cod,8*(texto.length()));
+    return texto;
+}
+string leer_Txt(string arch){ //Abre archivo y retorna su contenido mediante un string
+    long long int tam;
+    string salida, s2;
+    char s;
+    fstream k_1(arch, ios::in | ios::ate);
+    tam=k_1.tellg();
+    k_1.close();
+    fstream k(arch.c_str(), ios::in | ios::binary);
+    for(long long int i=0;i<tam;i++){
+        k.get(s);
+        salida.push_back(s);
+    }
+    k.close();
+    return salida;
+}
+void text2bin(string texto,bool *cod){ //String a binario y despues a char
+    char s;
+    for(unsigned long long int i=0;i<(texto.length());i++){
+        s=char(texto[i]);
+        for(int j=0;j<8;j++) cod[8*i+j]=(((s<<j)&0x80)==0x80);
+    }
+}
+
 string bin2text(bool *cod,unsigned long long int l){ //array binario a string
     string text="";
     string s;
@@ -94,21 +132,8 @@ unsigned short regla_1(short *seg, bool *data, unsigned short regla, unsigned lo
     else if(contador[0]<contador[1]) reg=2;
     return reg;
 }
-string leer_Txt(string arch){ //Abre archivo y retorna su contenido mediante un string
-    long long int tam;
-    string salida, s2;
-    char s;
-    fstream k_1(arch, ios::in | ios::ate);
-    tam=k_1.tellg();
-    k_1.close();
-    fstream k(arch.c_str(), ios::in | ios::binary);
-    for(long long int i=0;i<tam;i++){
-        k.get(s);
-        salida.push_back(s);
-    }
-    k.close();
-    return salida;
-}
+
+//FUNCIONES PARCIAL
 
 void escribir_txt(string texto,string arch){ //Funcion basica para escribir en un archivo
     ofstream k(arch.c_str(), ios::out | ios::binary);
@@ -117,9 +142,328 @@ void escribir_txt(string texto,string arch){ //Funcion basica para escribir en u
 }
 
 
-void ini_administrador() {
-
+void ini_administrador(map <int,producto> &inv,map <int,combo> &com){
+    //Clave y comparacion
+    //Parametros: maps que contiene el inventario y  los combos para pasarselos a la funcion administrador
+    system("cls");
+    string clave;
+    cout<<"Ingrese la clave de administrador: "<<endl;
+    cin>>clave;
+    if(clave!=desifrar()){
+        cout<<"CLAVE INCORRECTA"<<endl;
+        return;}
+    else{
+        cout<<"ACCESO CONCEDIDO"<<endl;
+        system("pause");
+        system("cls");
+        administrador(inv,com);}
 }
+
+void administrador(map <int,producto> &inv,map <int,combo> &com){
+//Funcion que muestra el menu y las funciones del administrador
+//Parametros: Maps que contiene el inventario y  los  combos para modificarlos
+    short opcion;
+    int el,temp;
+    cout<<"INVENTARIO ACTUAL"<<endl<<endl;
+    m_inventario(inv);
+    while(true){
+        cout<<"Ingrese la opcion que desee: "<<endl,
+        cout<<"1)Mostrar los combos del momento"<<endl<<"2)Crear un nuevo combo"<<endl<<"3)Quitar un combo"<<endl<<"4)Mostrar inventario"<<endl;
+        cout<<"5)Ingresar un nuevo producto para el inventario"<<endl<<"6)Quitar un producto del inventario"<<endl<<"7)Abastecer un producto del inventario"<<endl<<"8)Reporte de ventas"<<endl<<"0)SALIR"<<endl;
+        cin>>opcion;
+        system("cls");
+        switch(opcion){
+        case 1:
+            system("cls");
+            m_combos(com,inv);
+
+            break;
+
+        case 2:
+            system("cls");
+            c_combo(com,inv);
+
+            break;
+
+
+            break;
+        case 3:
+            system("cls");
+            cout<<"Ingrese el N del combo a eliminar: "<<endl;
+            cin>>el;
+            if(com.find(el)==com.end())
+                cout<<"El N que ingreso no existe en los combos actuales"<<endl;
+            else com.erase(el);
+            break;
+
+        case 4:
+            system("cls");
+            m_inventario(inv);
+
+            break;
+        case 5:
+
+            system("cls");
+            m_inventario(inv);
+
+            a_productos(inv);
+
+            system("cls");
+            break;
+
+
+
+        case 6:
+            system("cls");
+            cout<<"Ingrese el N del producto del inventario para eliminar: "<<endl;
+            cin>>el;
+            if(inv.find(el)==inv.end())
+                cout<<endl<<"N no disponible en el inventario"<<endl;
+            else inv.erase(el);
+
+            break;
+
+        case 7:
+            system("cls");
+            m_inventario(inv);
+            cout<<endl<<"Ingrese el N del producto del inventario para abastecer: "<<endl;
+            cin>>el;
+            if(inv.find(el)==inv.end())
+                cout<<endl<<"El N no se encuentra en el inventario"<<endl;
+            else{
+                cout<<endl<<"Ingrese la cantidad que llego del producto para abastecerlo"<<endl;
+                cin>>temp;
+                inv[el].anadir_cant(temp);}
+
+        case 8:
+            cout<<leer_Txt("reporte.txt");
+            break;
+        case 0:
+            return;
+        default:
+            cout<<endl<<"OPCION INVALIDA"<<endl;
+            break;
+        }
+        system("pause");
+        system("cls");
+    }
+}
+
+void ingresar_usu(map <int,producto> &inv,map <int,combo> com){
+//Pide el documento y la clave del usuario,
+//map que almacena el documento y clave de cada usuario que este en "users.txt"
+//Parametros: maps que contienen el inventario y los combos
+
+    string user,clave;
+    map <string,string> users;//en este map se almacenaran la cedula y contraseña de cada usuario
+    map <string,string>::iterator it;
+    c_usuarios(users);
+
+        cout<<"Ingrese su numero de documento: "<<endl;
+        cin>>user;
+        if(users.find(user)==users.end()){
+            cout<<"El numero de documento no se encuentra registrado en el sistema "<<endl;
+        }
+        else{
+            cout<<"Ingrese su clave: "<<endl;
+            cin>>clave;
+            if(clave==users[user]){
+
+                usu(inv,com,user);}
+            else{
+                cout<<"Clave ingresada incorrecta"<<endl;
+            }
+        }
+    }
+
+
+void usu(map <int,producto> &inv,map <int,combo> com,string usuario){
+// Funcion para comprar combos
+// Registra las compras en un .txt
+    int temp;
+    unsigned long long int precio=0,pago;
+    bool ban=1;
+    list <int> pedido;
+    list <int>::iterator lit;
+    string history,silla [2];
+    while (ban){
+        cout<<"COMBOS EN VENTA"<<endl;
+        m_combos(com,inv);
+        cout<<endl<<"Que numero de combo desea ordenar: "<<endl;
+        cin>>temp;
+        if(temp<1 || temp>signed(com.size()))
+            cout<<endl<<"El combo no esta disponible"<<endl;
+        else if(!com[temp].disp(inv))
+            cout<<endl<<"El combo no esta disponible"<<endl;
+        else{
+            pedido.push_back(temp);
+            cout<<"Desea agregar algo mas a su pedido: "<<endl<<"1) Si"<<endl<<"0) No"<<endl;
+            cin>>ban;}
+    }
+    pedido.sort();
+    for(lit=pedido.begin();lit!=pedido.end();lit++)
+        precio+=com[*lit].costo;
+    system("cls");
+    cout<<endl<<"El total de su pedido es " <<precio<<endl;
+    ban=1;
+    while(ban){
+        cout<<"Ingrese el valor con el que va a realizar su pago: ";
+        cin>>pago;
+        if(pago<precio) cout<<"Fondos insuficientes" <<endl;
+        else ban=0;
+    }
+    if(pago==precio)
+        cout<<endl<<"La cantidad es exacta"<<endl;
+    else
+        vueltas(pago-precio);
+    for(lit=pedido.begin();lit!=pedido.end();lit++){
+        com[*lit].comprar_com(inv);
+        history= history + com[*lit].v_combo() + '\n';
+    }
+    system("pause");
+    system("cls");
+    ban=0;
+    while(!ban){
+        cout<<"TENEMOS EL SERVICIO COMIDA A TU SILLA"<<endl<<"Ingrese la sala de su pelicula: "<<endl;
+        cin>>silla[0];
+        cout<<"Ingrese su asiento: "<<endl;
+        cin>>silla[1];
+        cout<<"Son correctos sus datos: "<<endl<<"Silla: "<<silla[1]<<endl<<"Sala: "<<silla[0]<<endl<<"1) Si"<<endl<<"0) No) ";
+        cin>>ban;
+    }
+    history= history + "La compra fue realizada por el usuario con identificacion: " + usuario + "\nEl monto pagado fue de " + int2str(precio) + "\nEl pedido fue entrgado en la sala: " + silla[0] + " asiento: " +silla[1];
+    g_reporte(history);
+    cout<<endl<<"Gracias por su compra"<<endl<<endl<<"Lo esperamos pronto";
+}
+
+void registrar_usuario(){
+// Registrar nuevos usuarios en otro .txt
+    map <string,string> users;
+    c_usuarios(users);
+    string clave,usuario,datos=leer_Txt("users.txt");
+    usuario=(users.begin())->first;
+    while(users.find(usuario)!=users.end()){
+        cout<<"Ingrese su numero de documento: ";
+        cin>>usuario;
+        if(users.find(usuario)!=users.end())cout<<"DOCUMENTO YA EXISTENTE EN EL SISTEMA"<<endl;}
+    cout<<"Ingrese su contrasena: "<<endl;
+    cin>>clave;
+    system("cls");
+    cout<<"Bienvenido a nuestro CINE!! "<<endl<<endl<<endl;
+    datos=datos + '\n' + usuario + ';' + clave;
+    escribir_txt(datos,"users.txt");
+}
+
+void a_productos(map <int,producto> &inv){
+//Recibe map con inventario para poder añadir productos
+    int unid[2],id=(inv.begin())->first;
+    producto a;
+    string nombre;
+    long long int costo;
+    while(inv.find(id)!=inv.end()){
+        cout<<"Ingrese el N del nuevo producto (No ingrese un N existente): "<<endl;
+        cin>>id;
+        if(inv.find(id)!=inv.end()) cout<<endl<<"N EXISTENTE"<<endl;}
+    cout<<"Ingrese el nombre del producto (De la forma xxx_xx_xx: "<<endl;
+    cin>>nombre;
+    cout<<"Ingrese la cantidad de unidades que viene en cada producto: "<<endl;
+    cin>>unid[0];
+    cout<<"Ingrese la cantidad del producto: "<<endl;
+    cin>>unid[1];
+    cout<<"Ingrese el precio del producto: "<<endl;
+    cin>>costo;
+    a.create(nombre,unid[0],unid[0],unid[1],costo);
+    inv.insert(pair<int,producto>(id,a));
+}
+
+void c_combo(map <int,combo> &com,map <int,producto> inv){
+// Parametro: map de combos y el map con el inventario,
+// Crear combos dependiendo del inventario
+    cout<<endl<<"COMBOS ACTUALES"<<endl;
+    m_combos(com,inv);
+    int num=(com.begin())->first;
+    while(com.find(num)!=com.end()){
+        cout<<"Ingrese el N del combo: "<<endl;
+        cin>>num;
+        if(com.find(num)!=com.end()) cout<<"N existente"<<endl;
+    }
+    combo b;
+    cout<<"Inventario actual para abastecer el combo"<<endl;
+    m_inventario(inv);
+    b.create(inv);
+    com.insert(pair<int,combo>(num,b));
+}
+
+void m_inventario(map <int,producto> inv){
+//Recibe map con inventario para imprimirlo
+    map <int,producto>::iterator ii;
+    cout<<"|N |                     Producto                |cantidad|costo |"<<endl;
+    for(int i=0;i<65;i++) cout<<' ';
+    cout<<endl;
+    for(ii=inv.begin();ii!=inv.end();ii++){
+        if(ii->first<10)
+            cout<<"| "<<ii->first;
+        else
+            cout<<'|'<<ii->first;
+        ii->second.v_produc();
+        cout<<endl;
+        for(int i=0;i<65;i++) cout<<' ';
+        cout<<endl;
+    }
+}
+
+void m_combos(map <int,combo> com,map <int,producto> inv){
+//Recibe el map que contiene a los combos y los imprime en una tabla dependiendo si estan o no disponibles
+
+    system("cls");
+    map <int,combo>::iterator ic;
+    for(int i=0;i<62;i++) cout<<' ';
+    cout<<endl;
+    for(ic=com.begin();ic!=com.end();ic++){
+        if(ic->first<10)
+            cout<<"| "<<ic->first;
+        else
+            cout<<'|'<<ic->first;
+        cout<<ic->second.v_combo();
+        if(!(ic->second.disp(inv))) cout<<"producto no disponible por el momento";
+        cout<<endl;
+        for(int i=0;i<62;i++) cout<<' ';
+        cout<<endl;
+    }
+}
+void g_inventario(map <int,producto> &inv){
+    //Recibe map que contiene el inventario para ponerlo en un .txt
+    string datos;
+    map <int,producto>::iterator j;
+    for(j=inv.begin();j!=inv.end();j++){
+        datos= datos + int2str(j->first) + ';' + j->second.guardado() + '\n';
+    }
+    datos.pop_back();
+    escribir_txt(datos,"inventario.txt");
+}
+
+void g_combos(map <int,combo> &inv){
+    //Recibe map que contiene los combos para ponerlo en un .txt
+    string datos;
+    map <int,combo>::iterator j;
+    for(j=inv.begin();j!=inv.end();j++){
+        datos= datos + int2str(j->first) + ';' + j->second.guardado() + '\n';
+    }
+    datos.pop_back();
+    escribir_txt(datos,"combos.txt");
+}
+
+void g_reporte(string hist){
+// Recibe un string con la compra realizada por el usuario y lo añade en otro .txt con las demas compras
+    string fecha,datos=leer_Txt("reporte.txt");
+    time_t now= time(0);
+    tm *time= localtime(&now);
+    fecha=int2str(time->tm_mday)+ "/" + int2str(time->tm_mon+1) + '/' + int2str(1900+time->tm_year);
+    fecha=fecha + "   " + int2str(time->tm_hour) + ':' + int2str(time->tm_min) + ':' + int2str(time->tm_sec) + '\n';
+    fecha=datos + fecha + hist + "\n\n";
+    escribir_txt((fecha),"reporte.txt");
+}
+
 void d_inventario(map <int,producto> &inv){
 // Extraer datos del inventario e incluir en un mapa
     string temp="",name,datos=leer_Txt("inventario.txt");
@@ -199,120 +543,6 @@ void d_combos(map <int,combo> &com){
             ff.erase(it->first);}
     }
 }
-void ingresar_usu(map <int,producto> &inv,map <int,combo> com){
-//Pide el documento y la clave del usuario,
-//map que almacena el documento y clave de cada usuario que este en "users.txt"
-//Parametros: maps que contienen el inventario y los combos
-
-    string user,clave;
-    map <string,string> users;//en este map se almacenaran la cedula y contraseña de cada usuario
-    map <string,string>::iterator it;
-    c_usuarios(users);
-
-        cout<<"Ingrese su numero de documento: "<<endl;
-        cin>>user;
-        if(users.find(user)==users.end()){
-            cout<<"El numero de documento no se encuentra registrado en el sistema "<<endl;
-        }
-        else{
-            cout<<"Ingrese su clave: "<<endl;
-            cin>>clave;
-            if(clave==users[user]){
-
-                usu(inv,com,user);}
-            else{
-                cout<<"Clave ingresada incorrecta"<<endl;
-            }
-        }
-    }
-
-
-void usu(map <int,producto> &inv,map <int,combo> com,string usuario){
-// Funcion para comprar combos
-// Registra las compras en un .txt
-    int temp;
-    unsigned long long int precio=0,pago;
-    bool ban=1;
-    list <int> pedido;
-    list <int>::iterator lit;
-    string history,silla [2];
-    while (ban){
-        cout<<"COMBOS EN VENTA"<<endl;
-        m_combos(com,inv);
-        cout<<endl<<"Que numero de combo desea ordenar: "<<endl;
-        cin>>temp;
-        if(temp<1 || temp>signed(com.size()))
-            cout<<endl<<"El combo no esta disponible"<<endl;
-        else if(!com[temp].disp(inv))
-            cout<<endl<<"El combo no esta disponible"<<endl;
-        else{
-            pedido.push_back(temp);
-            cout<<"Desea agregar algo mas a su pedido: "<<endl<<"1) Si"<<endl<<"0) No"<<endl;
-            cin>>ban;}
-    }
-    pedido.sort();
-    for(lit=pedido.begin();lit!=pedido.end();lit++)
-        precio+=com[*lit].costo;
-    system("cls");
-    cout<<endl<<"El total de su pedido es " <<precio<<endl;
-    ban=1;
-    while(ban){
-        cout<<"\nIngrese la cantidad con la que pagara: ";
-        cin>>pago;
-        if(pago<precio) cout<<"la cantidad ingresada es menor a la cantidad a pagar, ingrese un monto mayor\n";
-        else ban=0;
-    }
-    if(pago==precio)
-        cout<<endl<<"La cantidad es exacta"<<endl;
-    else
-        vueltas(pago-precio);
-    for(lit=pedido.begin();lit!=pedido.end();lit++){
-        com[*lit].comprar_com(inv);
-        history= history + com[*lit].v_combo() + '\n';
-    }
-    system("pause");
-    system("cls");
-    ban=0;
-    while(!ban){
-        cout<<"TENEMOS EL SERVICIO COMIDA A TU SILLA"<<endl<<"Ingrese la sala de su pelicula: "<<endl;
-        cin>>silla[0];
-        cout<<"Ingrese su asiento: "<<endl;
-        cin>>silla[1];
-        cout<<"Son correctos sus datos: "<<endl<<"Silla: "<<silla[1]<<endl<<"Sala: "<<silla[0]<<endl<<"1) Si, 0) No) ";
-        cin>>ban;
-    }
-    history= history + "La compra fue realizada por el usuario con identificacion: " + usuario + "\nEl monto pagado fue de " + int2str(precio) + "\nEl pedido fue entrgado en la sala: " + silla[0] + " asiento: " +silla[1];
-    g_reporte(history);
-    cout<<endl<<"Gracias por su compra"<<endl<<endl<<"Lo esperamos pronto";
-}
-void g_reporte(string hist){
-// Recibe un string con la compra realizada por el usuario y lo añade en otro .txt con las demas compras
-    string fecha,datos=leer_Txt("reporte.txt");
-    time_t now= time(0);
-    tm *time= localtime(&now);
-    fecha=int2str(time->tm_mday)+ "/" + int2str(time->tm_mon+1) + '/' + int2str(1900+time->tm_year);
-    fecha=fecha + "   " + int2str(time->tm_hour) + ':' + int2str(time->tm_min) + ':' + int2str(time->tm_sec) + '\n';
-    fecha=datos + fecha + hist + "\n\n";
-    escribir_txt((fecha),"reporte.txt");
-}
-
-void registrar_usuario(){
-// Registrar nuevos usuarios en otro .txt
-    map <string,string> users;
-    c_usuarios(users);
-    string clave,usuario,datos=leer_Txt("users.txt");
-    usuario=(users.begin())->first;
-    while(users.find(usuario)!=users.end()){
-        cout<<"Ingrese su numero de documento: ";
-        cin>>usuario;
-        if(users.find(usuario)!=users.end())cout<<"DOCUMENTO YA EXISTENTE EN EL SISTEMA"<<endl;}
-    cout<<"Ingrese su contrasena: "<<endl;
-    cin>>clave;
-    system("cls");
-    cout<<"Bienvenido a nuestro CINE!! "<<endl<<endl<<endl;
-    datos=datos + '\n' + usuario + ';' + clave;
-    escribir_txt(datos,"users.txt");
-}
 
 void c_usuarios(map <string,string> &usu){
 // Extrae los usuarios y claves de otro .txt y los pone en un map
@@ -333,236 +563,10 @@ void c_usuarios(map <string,string> &usu){
             temp.push_back(datos[i]);
     }
 }
-void ini_administrador(map <int,producto> &inv,map <int,combo> &com){
-    //Clave y comparacion
-    //Parametros: maps que contiene el inventario y  los combos para pasarselos a la funcion administrador
-    system("cls");
-    string clave;
-    cout<<"Ingrese la clave de administrador: "<<endl;
-    cin>>clave;
-    if(clave!=des()){
-        cout<<"CLAVE INCORRECTA"<<endl;
-        return;}
-    else{
-        cout<<"ACCESO CONCEDIDO"<<endl;
-        system("pause");
-        system("cls");
-        administrador(inv,com);}
-}
-void administrador(map <int,producto> &inv,map <int,combo> &com){
-//Funcion que muestra el menu y las funciones del administrador
-//Parametros: Maps que contiene el inventario y  los  combos para modificarlos
-    short opcion;
-    int el, temp;
-    cout<<"INVENTARIO ACTUAL"<<endl<<endl;
-    m_inventario(inv);
-    while(true){
-        cout<<"Ingrese la opcion que desee: "<<endl,
-        cout<<"1)Mostrar los combos del momento"<<endl<<"2)Crear un nuevo combo"<<endl<<"3)Quitar un combo"<<endl<<"4)Mostrar inventario"<<endl;
-        cout<<"5)Ingresar un nuevo producto para el inventario"<<endl<<"6)Quitar un producto del inventario"<<endl<<"7)Abastecer un producto del inventario"<<endl<<"8)Reporte de ventas"<<endl<<"0)SALIR"<<endl;
-        cin>>opcion;
-        system("cls");
-        switch(opcion){
-        case 1:
-            system("cls");
-            m_combos(com,inv);
-
-            break;
-
-        case 2:
-            system("cls");
-            c_combo(com,inv);
-
-
-            break;
-        case 3:
-
-            system("cls");
-            cout<<"Ingrese el N del combo a eliminar: "<<endl;
-            cin>>el;
-            if(com.find(el)==com.end())
-                cout<<"El N que ingreso no existe en los combos actuales"<<endl;
-            else com.erase(el);
-            break;
-
-        case 4:
-            system("cls");
-            m_inventario(inv);
-
-            break;
-        case 5:
-
-            system("cls");
-            m_inventario(inv);
-
-            a_productos(inv);
-
-            system("cls");
-            break;
 
 
 
 
-        case 6:
-            system("cls");
-            cout<<"Ingrese el N del producto del inventario para eliminar: "<<endl;
-            cin>>el;
-            if(inv.find(el)==inv.end())
-                cout<<endl<<"N no disponible en el inventario"<<endl;
-            else inv.erase(el);
-
-            break;
 
 
-        case 7:
-            system("cls");
-            m_inventario(inv);
-            cout<<endl<<"Ingrese el N del producto del inventario para abastecer: "<<endl;
-            cin>>el;
-            if(inv.find(el)==inv.end())
-                cout<<endl<<"El N no se encuentra en el inventario"<<endl;
-            else{
-                cout<<endl<<"Ingrese la cantidad que llego del producto para abastecerlo"<<endl;
-                cin>>temp;
-                inv[el].anadir_cant(temp);}
 
-
-        case 8:
-            cout<<leer_Txt("reporte.txt");
-            break;
-        case 0:
-            return;
-        default:
-            cout<<endl<<"OPCION INVALIDA"<<endl;
-            break;
-        }
-        system("pause");
-        system("cls");
-    }
-}
-void a_productos(map <int,producto> &inv){
-//Recibe map con inventario para poder añadir productos
-    int unid[2],id=(inv.begin())->first;
-    producto a;
-    string nombre;
-    long long int costo;
-    while(inv.find(id)!=inv.end()){
-        cout<<"Ingrese el N del nuevo producto (No ingrese un N existente): "<<endl;
-        cin>>id;
-        if(inv.find(id)!=inv.end()) cout<<endl<<"N EXISTENTE"<<endl;}
-    cout<<"Ingrese el nombre del producto (De la forma xxx_xx_xx: "<<endl;
-    cin>>nombre;
-    cout<<"Ingrese la cantidad de unidades que viene en cada producto: "<<endl;
-    cin>>unid[0];
-    cout<<"Ingrese la cantidad del producto: "<<endl;
-    cin>>unid[1];
-    cout<<"Ingrese el precio del producto: "<<endl;
-    cin>>costo;
-    a.create(nombre,unid[0],unid[0],unid[1],costo);
-    inv.insert(pair<int,producto>(id,a));
-}
-void m_inventario(map <int,producto> inv){
-//Recibe map con inventario para imprimirlo
-    map <int,producto>::iterator ii;
-    cout<<"|N |                     Producto                |cantidad|costo |"<<endl;
-    for(int i=0;i<65;i++) cout<<' ';
-    cout<<endl;
-    for(ii=inv.begin();ii!=inv.end();ii++){
-        if(ii->first<10)
-            cout<<"| "<<ii->first;
-        else
-            cout<<'|'<<ii->first;
-        ii->second.v_produc();
-        cout<<endl;
-        for(int i=0;i<65;i++) cout<<' ';
-        cout<<endl;
-    }
-}
-template <typename t>
-string int2str(t a){ //Entero a string
-    int c=0,i=1;
-    char e;
-    string b;
-    for(;(a/i);i=i*10)
-        c++;
-    for(int j=0;j<c;j++){
-        i/=10;
-        e=(a/i)+48;
-        b.push_back(e);
-        a-=(a/i)*i;
-    }
-    return b;
-}
-void g_inventario(map <int,producto> &inv){
-    //Recibe map que contiene el inventario para ponerlo en un .txt
-    string datos;
-    map <int,producto>::iterator j;
-    for(j=inv.begin();j!=inv.end();j++){
-        datos= datos + int2str(j->first) + ';' + j->second.guardado() + '\n';
-    }
-    datos.pop_back();
-    escribir_txt(datos,"inventario.txt");
-}
-
-void g_combos(map <int,combo> &inv){
-    //Recibe map que contiene los combos para ponerlo en un .txt
-    string datos;
-    map <int,combo>::iterator j;
-    for(j=inv.begin();j!=inv.end();j++){
-        datos= datos + int2str(j->first) + ';' + j->second.guardado() + '\n';
-    }
-    datos.pop_back();
-    escribir_txt(datos,"combos.txt");
-}
-void a_productos(){
-
-}
-void m_combos(map <int,combo> com,map <int,producto> inv){
-//Recibe el map que contiene a los combos y los imprime en una tabla dependiendo si estan o no disponibles
-
-    system("cls");
-    map <int,combo>::iterator ic;
-    for(int i=0;i<62;i++) cout<<' ';
-    cout<<endl;
-    for(ic=com.begin();ic!=com.end();ic++){
-        if(ic->first<10)
-            cout<<"| "<<ic->first;
-        else
-            cout<<'|'<<ic->first;
-        cout<<ic->second.v_combo();
-        if(!(ic->second.disp(inv))) cout<<"producto no disponible por el momento";
-        cout<<endl;
-        for(int i=0;i<62;i++) cout<<' ';
-        cout<<endl;
-    }
-}
-void c_combo(map <int,combo> &com,map <int,producto> inv){
-// Parametro: map de combos y el map con el inventario,
-// Crear combos dependiendo del inventario
-    cout<<endl<<"COMBOS ACTUALES"<<endl;
-    m_combos(com,inv);
-    int num=(com.begin())->first;
-    while(com.find(num)!=com.end()){
-        cout<<"Ingrese el N del combo: "<<endl;
-        cin>>num;
-        if(com.find(num)!=com.end()) cout<<"N existente"<<endl;
-    }
-    combo b;
-    cout<<"Inventario actual para abastecer el combo"<<endl;
-    m_inventario(inv);
-    b.create(inv);
-    com.insert(pair<int,combo>(num,b));
-}
-void producto::s_produc(int num){
-    cost-=num*(cost/(((cant-1)*u_producto)+u_paquete));
-    u_paquete-=num;
-    if (num>u_paquete){
-        u_paquete=u_producto+u_paquete;
-        cant--;
-    }
-    if(u_paquete==0){
-        u_paquete=u_producto;
-        cant--;
-    }
-    disponible=((u_producto-1)*cant)+u_paquete;
-}

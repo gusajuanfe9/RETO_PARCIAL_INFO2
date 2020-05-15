@@ -1,4 +1,68 @@
 #include "cmb.h"
+
+string combo::guardado(){
+    //facilita la funcion de guardado retornando en un string los datos privados a guardar
+    string datos;
+    map <int,int>::iterator it;
+    datos=contenido + ';' + int2str(costo) + ';';
+    for(it=ff.begin();it!=ff.end();it++)
+        datos= datos + int2str(it->first) + '-' + int2str(it->second) + ';';
+    datos.pop_back();
+    return datos;
+}
+
+bool combo::disp(map<int, producto> inv){
+    //esta funcion se basa en los profuctos existente para devolver un true si si se puede vender o un false en caso contrario
+    map <int,int>::iterator it;
+    for(it=ff.begin();it!=ff.end();it++){
+        if(inv[it->first].disponible<unsigned(it->second) || inv.find(it->first)==inv.end())
+            return 0;
+    }
+    return 1;
+}
+
+string combo::int2str(int long long a){
+    //esta funncion se usa para convertir las caracteristicas int a string y poder manejarlas mejor
+    int long long c=0,i=1;
+    char e;
+    string b;
+    for(;(a/i);i=i*10)
+        c++;
+    for(int j=0;j<c;j++){
+        i/=10;
+        e=(a/i)+48;
+        b.push_back(e);
+        a-=(a/i)*i;
+    }
+    return b;
+}
+
+void combo::comprar_com(map<int, producto> &inv){
+    //esta funcion se ejecuta cundo se compra un combo, lo que hace es sacar del inventario los productos que lleva el combo
+    map <int,int>::iterator it;
+    for(it=ff.begin();it!=ff.end();it++){
+        inv[it->first].s_produc(it->second);
+    }
+}
+
+void combo::ini(string cont, long long cost, map<int, int> f){
+    //esta funcion es la que se invoca para iniciar los combos cuando se inicia el programa
+    contenido=cont;
+    costo=cost;
+    ff=f;
+}
+
+string combo::v_combo(){
+    //esta funcion facilita la visualizacion de las caracteristicas del objeto para mostraselas al usuario
+    string ver='|' + contenido;
+    for(unsigned int i=0;i<(50-contenido.length());i++) ver.push_back(' ');
+    ver.push_back('|');
+    if(costo>=1000 && costo<10000) ver= ver + "  ";
+    else ver.push_back(' ');
+    ver= ver + int2str(costo) + '|';
+    return ver;
+}
+
 void combo::create(map <int,producto> inv){
     //esta funcion facilita la creacion de el nuevo combo
     int temp[2];
@@ -21,60 +85,4 @@ void combo::create(map <int,producto> inv){
     cout<<"cual es el costo del combo: ";
     cin>>costo;
 }
-void combo::ini(string cont, long long cost, map<int, int> f){
-    //esta funcion es la que se invoca para iniciar los combos cuando se inicia el programa
-    contenido=cont;
-    costo=cost;
-    ff=f;
-}
-void combo::comprar_com(map<int, producto> &inv){
-    //esta funcion se ejecuta cundo se compra un combo, lo que hace es sacar del inventario los productos que lleva el combo
-    map <int,int>::iterator it;
-    for(it=ff.begin();it!=ff.end();it++){
-        inv[it->first].s_produc(it->second);
-    }
-}
-string combo::v_combo(){
-    //esta funcion facilita la visualizacion de las caracteristicas del objeto para mostraselas al usuario
-    string ver='|' + contenido;
-    for(unsigned int i=0;i<(50-contenido.length());i++) ver.push_back(' ');
-    ver.push_back('|');
-    if(costo>=1000 && costo<10000) ver= ver + "  ";
-    else ver.push_back(' ');
-    ver= ver + int2str(costo) + '|';
-    return ver;
-}
-bool combo::disp(map<int, producto> inv){
-    //esta funcion se basa en los profuctos existente para devolver un true si si se puede vender o un false en caso contrario
-    map <int,int>::iterator it;
-    for(it=ff.begin();it!=ff.end();it++){
-        if(inv[it->first].disponible<unsigned(it->second) || inv.find(it->first)==inv.end())
-            return 0;
-    }
-    return 1;
-}
-string combo::int2str(int long long a){
-    //esta funncion se usa para convertir las caracteristicas int a string y poder manejarlas mejor
-    int long long c=0,i=1;
-    char e;
-    string b;
-    for(;(a/i);i=i*10)
-        c++;
-    for(int j=0;j<c;j++){
-        i/=10;
-        e=(a/i)+48;
-        b.push_back(e);
-        a-=(a/i)*i;
-    }
-    return b;
-}
-string combo::guardado(){
-    //facilita la funcion de guardado retornando en un string los datos privados a guardar
-    string datos;
-    map <int,int>::iterator it;
-    datos=contenido + ';' + int2str(costo) + ';';
-    for(it=ff.begin();it!=ff.end();it++)
-        datos= datos + int2str(it->first) + '-' + int2str(it->second) + ';';
-    datos.pop_back();
-    return datos;
-}
+

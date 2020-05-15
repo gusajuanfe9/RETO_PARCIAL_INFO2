@@ -16,7 +16,6 @@ private:
     int cant;
     int long long cost;
     string int2str(int long a);
-
 public:
     void create(string name,int uni_p,int uni_a,int canti,int long long costo);
     void s_produc(int num);
