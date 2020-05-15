@@ -42,8 +42,8 @@ int main(){
             system("cls");
         }
     }
-    g_combos();
-    g_inventario();
+    g_combos(com);
+    g_inventario(inv);
     return 0;
 }
 

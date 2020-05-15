@@ -16,6 +16,7 @@ public:
     void ini(string cont, long long int cost, map <int,int> ff);
     string v_combo();
     bool disp(map <int,producto> inv);
+    string guardado();
 
 
 

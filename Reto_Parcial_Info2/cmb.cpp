@@ -61,3 +61,13 @@ string combo::int2str(int long long a){
     }
     return b;
 }
+string combo::guardado(){
+    //facilita la funcion de guardado retornando en un string los datos privados a guardar
+    string datos;
+    map <int,int>::iterator it;
+    datos=contenido + ';' + int2str(costo) + ';';
+    for(it=ff.begin();it!=ff.end();it++)
+        datos= datos + int2str(it->first) + '-' + int2str(it->second) + ';';
+    datos.pop_back();
+    return datos;
+}

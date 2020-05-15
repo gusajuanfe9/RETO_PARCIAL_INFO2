@@ -248,6 +248,7 @@ void administrador(map <int,producto> &inv,map <int,combo> &com){
 //Funcion que muestra el menu y las funciones del administrador
 //Parametros: Maps que contiene el inventario y  los  combos para modificarlos
     short opcion;
+    int el, temp;
     cout<<"INVENTARIO ACTUAL"<<endl<<endl;
     m_inventario(inv);
     while(true){
@@ -265,14 +266,18 @@ void administrador(map <int,producto> &inv,map <int,combo> &com){
 
         case 2:
             system("cls");
-            c_combo();
-
-            break;
+            c_combo(com,inv);
 
 
             break;
         case 3:
 
+            system("cls");
+            cout<<"Ingrese el N del combo a eliminar: "<<endl;
+            cin>>el;
+            if(com.find(el)==com.end())
+                cout<<"El N que ingreso no existe en los combos actuales"<<endl;
+            else com.erase(el);
             break;
 
         case 4:
@@ -285,27 +290,40 @@ void administrador(map <int,producto> &inv,map <int,combo> &com){
             system("cls");
             m_inventario(inv);
 
-            a_productos();
+            a_productos(inv);
 
             system("cls");
             break;
+
 
 
 
         case 6:
             system("cls");
-
+            cout<<"Ingrese el N del producto del inventario para eliminar: "<<endl;
+            cin>>el;
+            if(inv.find(el)==inv.end())
+                cout<<endl<<"N no disponible en el inventario"<<endl;
+            else inv.erase(el);
 
             break;
+
 
         case 7:
             system("cls");
-
-            break;
+            m_inventario(inv);
+            cout<<endl<<"Ingrese el N del producto del inventario para abastecer: "<<endl;
+            cin>>el;
+            if(inv.find(el)==inv.end())
+                cout<<endl<<"El N no se encuentra en el inventario"<<endl;
+            else{
+                cout<<endl<<"Ingrese la cantidad que llego del producto para abastecerlo"<<endl;
+                cin>>temp;
+                inv[el].anadir_cant(temp);}
 
 
         case 8:
-            system("cls");
+            cout<<leer_Txt("reporte.txt");
             break;
         case 0:
             return;
@@ -317,7 +335,27 @@ void administrador(map <int,producto> &inv,map <int,combo> &com){
         system("cls");
     }
 }
-
+void a_productos(map <int,producto> &inv){
+//Recibe map con inventario para poder añadir productos
+    int unid[2],id=(inv.begin())->first;
+    producto a;
+    string nombre;
+    long long int costo;
+    while(inv.find(id)!=inv.end()){
+        cout<<"Ingrese el N del nuevo producto (No ingrese un N existente): "<<endl;
+        cin>>id;
+        if(inv.find(id)!=inv.end()) cout<<endl<<"N EXISTENTE"<<endl;}
+    cout<<"Ingrese el nombre del producto (De la forma xxx_xx_xx: "<<endl;
+    cin>>nombre;
+    cout<<"Ingrese la cantidad de unidades que viene en cada producto: "<<endl;
+    cin>>unid[0];
+    cout<<"Ingrese la cantidad del producto: "<<endl;
+    cin>>unid[1];
+    cout<<"Ingrese el precio del producto: "<<endl;
+    cin>>costo;
+    a.create(nombre,unid[0],unid[0],unid[1],costo);
+    inv.insert(pair<int,producto>(id,a));
+}
 void m_inventario(map <int,producto> inv){
 //Recibe map con inventario para imprimirlo
     map <int,producto>::iterator ii;
@@ -335,13 +373,41 @@ void m_inventario(map <int,producto> inv){
         cout<<endl;
     }
 }
-void g_inventario(){
-
+template <typename t>
+string int2str(t a){ //Entero a string
+    int c=0,i=1;
+    char e;
+    string b;
+    for(;(a/i);i=i*10)
+        c++;
+    for(int j=0;j<c;j++){
+        i/=10;
+        e=(a/i)+48;
+        b.push_back(e);
+        a-=(a/i)*i;
+    }
+    return b;
+}
+void g_inventario(map <int,producto> &inv){
+    //Recibe map que contiene el inventario para ponerlo en un .txt
+    string datos;
+    map <int,producto>::iterator j;
+    for(j=inv.begin();j!=inv.end();j++){
+        datos= datos + int2str(j->first) + ';' + j->second.guardado() + '\n';
+    }
+    datos.pop_back();
+    escribir_txt(datos,"inventario.txt");
 }
 
-
-void g_combos(){
-
+void g_combos(map <int,combo> &inv){
+    //Recibe map que contiene los combos para ponerlo en un .txt
+    string datos;
+    map <int,combo>::iterator j;
+    for(j=inv.begin();j!=inv.end();j++){
+        datos= datos + int2str(j->first) + ';' + j->second.guardado() + '\n';
+    }
+    datos.pop_back();
+    escribir_txt(datos,"combos.txt");
 }
 void a_productos(){
 
@@ -365,6 +431,20 @@ void m_combos(map <int,combo> com,map <int,producto> inv){
         cout<<endl;
     }
 }
-void c_combo(){
-
+void c_combo(map <int,combo> &com,map <int,producto> inv){
+// Parametro: map de combos y el map con el inventario,
+// Crear combos dependiendo del inventario
+    cout<<endl<<"COMBOS ACTUALES"<<endl;
+    m_combos(com,inv);
+    int num=(com.begin())->first;
+    while(com.find(num)!=com.end()){
+        cout<<"Ingrese el N del combo: "<<endl;
+        cin>>num;
+        if(com.find(num)!=com.end()) cout<<"N existente"<<endl;
+    }
+    combo b;
+    cout<<"Inventario actual para abastecer el combo"<<endl;
+    m_inventario(inv);
+    b.create(inv);
+    com.insert(pair<int,combo>(num,b));
 }
