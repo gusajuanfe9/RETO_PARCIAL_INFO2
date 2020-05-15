@@ -8,21 +8,25 @@ string bin2text(bool *cod,unsigned long long int l);
 void separacion(unsigned long long int semilla, bool *cod, unsigned long long int tam,bool dec);
 unsigned short regla_1(short *seg,bool *data,unsigned short regla, unsigned long long semilla,bool dec);
 long int str2int(string a);
-
+void vueltas(int long long a);
+template <typename t>
+string int2str(t a);
 
 void a_productos(map <int,producto> &inv);
 void ini_administrador(map <int,producto> &inv,map <int,combo> &com);
 void administrador(map <int,producto> &inv,map <int,combo> &com);
 void d_inventario(map <int,producto> &inv);
 void d_combos(map <int,combo> &com);
-void ingresar_usu();
+void ingresar_usu(map <int,producto> &inv,map <int,combo> com);
+void usu(map <int,producto> &inv,map <int,combo> com,string usuario);
 void registrar_usuario();
 void g_inventario(map <int,producto> &inv);
 void g_combos(map <int,combo> &inv);
-void usu();
+
 void c_usuarios(map <string,string> &usu);
 void m_inventario(map <int,producto> inv);
 void m_combos(map <int,combo> com,map <int,producto> inv);
 void c_combo(map <int,combo> &com,map <int,producto> inv);
 void m_inventario();
 void a_productos();
+void g_reporte(string hist);

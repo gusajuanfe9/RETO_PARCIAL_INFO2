@@ -27,6 +27,13 @@ void combo::ini(string cont, long long cost, map<int, int> f){
     costo=cost;
     ff=f;
 }
+void combo::comprar_com(map<int, producto> &inv){
+    //esta funcion se ejecuta cundo se compra un combo, lo que hace es sacar del inventario los productos que lleva el combo
+    map <int,int>::iterator it;
+    for(it=ff.begin();it!=ff.end();it++){
+        inv[it->first].s_produc(it->second);
+    }
+}
 string combo::v_combo(){
     //esta funcion facilita la visualizacion de las caracteristicas del objeto para mostraselas al usuario
     string ver='|' + contenido;

@@ -18,7 +18,7 @@ int main(){
 
         case 1: //Ingresar como usuario
             system("cls");
-            ingresar_usu();
+            ingresar_usu(inv,com);
 
             break;
 

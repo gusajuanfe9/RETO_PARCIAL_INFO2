@@ -17,6 +17,7 @@ public:
     string v_combo();
     bool disp(map <int,producto> inv);
     string guardado();
+    void comprar_com(map <int,producto> &inv);
 
 
 

@@ -17,6 +17,17 @@ void text2bin(string texto,bool *cod){ //String a binario y despues a char
         for(int j=0;j<8;j++) cod[8*i+j]=(((s<<j)&0x80)==0x80);
     }
 }
+void vueltas(int long long a){ //Funcion que controla el manejo de las vueltas de el usuario
+    int long long c;
+    int long long b[11]={100000, 50000,20000,10000,5000,2000,1000,500,200,100,50};
+    cout<<"Dinero sobrante: "<<endl;
+    for(int long long i=0;i<10;i++){
+        c=a/b[i];
+        a%=b[i];
+        cout<<b[i]<<": "<<c<<endl;
+    }
+    cout<<"Falta para completar: "<<a<<endl;
+}
 long int str2int(string a){  //String a entero
     int b,l,d=1,c=0;
     l=a.length();
@@ -188,9 +199,103 @@ void d_combos(map <int,combo> &com){
             ff.erase(it->first);}
     }
 }
-void ingresar_usu(){
+void ingresar_usu(map <int,producto> &inv,map <int,combo> com){
+//Pide el documento y la clave del usuario,
+//map que almacena el documento y clave de cada usuario que este en "users.txt"
+//Parametros: maps que contienen el inventario y los combos
 
+    string user,clave;
+    map <string,string> users;//en este map se almacenaran la cedula y contraseña de cada usuario
+    map <string,string>::iterator it;
+    c_usuarios(users);
+
+        cout<<"Ingrese su numero de documento: "<<endl;
+        cin>>user;
+        if(users.find(user)==users.end()){
+            cout<<"El numero de documento no se encuentra registrado en el sistema "<<endl;
+        }
+        else{
+            cout<<"Ingrese su clave: "<<endl;
+            cin>>clave;
+            if(clave==users[user]){
+
+                usu(inv,com,user);}
+            else{
+                cout<<"Clave ingresada incorrecta"<<endl;
+            }
+        }
+    }
+
+
+void usu(map <int,producto> &inv,map <int,combo> com,string usuario){
+// Funcion para comprar combos
+// Registra las compras en un .txt
+    int temp;
+    unsigned long long int precio=0,pago;
+    bool ban=1;
+    list <int> pedido;
+    list <int>::iterator lit;
+    string history,silla [2];
+    while (ban){
+        cout<<"COMBOS EN VENTA"<<endl;
+        m_combos(com,inv);
+        cout<<endl<<"Que numero de combo desea ordenar: "<<endl;
+        cin>>temp;
+        if(temp<1 || temp>signed(com.size()))
+            cout<<endl<<"El combo no esta disponible"<<endl;
+        else if(!com[temp].disp(inv))
+            cout<<endl<<"El combo no esta disponible"<<endl;
+        else{
+            pedido.push_back(temp);
+            cout<<"Desea agregar algo mas a su pedido: "<<endl<<"1) Si"<<endl<<"0) No"<<endl;
+            cin>>ban;}
+    }
+    pedido.sort();
+    for(lit=pedido.begin();lit!=pedido.end();lit++)
+        precio+=com[*lit].costo;
+    system("cls");
+    cout<<endl<<"El total de su pedido es " <<precio<<endl;
+    ban=1;
+    while(ban){
+        cout<<"\nIngrese la cantidad con la que pagara: ";
+        cin>>pago;
+        if(pago<precio) cout<<"la cantidad ingresada es menor a la cantidad a pagar, ingrese un monto mayor\n";
+        else ban=0;
+    }
+    if(pago==precio)
+        cout<<endl<<"La cantidad es exacta"<<endl;
+    else
+        vueltas(pago-precio);
+    for(lit=pedido.begin();lit!=pedido.end();lit++){
+        com[*lit].comprar_com(inv);
+        history= history + com[*lit].v_combo() + '\n';
+    }
+    system("pause");
+    system("cls");
+    ban=0;
+    while(!ban){
+        cout<<"TENEMOS EL SERVICIO COMIDA A TU SILLA"<<endl<<"Ingrese la sala de su pelicula: "<<endl;
+        cin>>silla[0];
+        cout<<"Ingrese su asiento: "<<endl;
+        cin>>silla[1];
+        cout<<"Son correctos sus datos: "<<endl<<"Silla: "<<silla[1]<<endl<<"Sala: "<<silla[0]<<endl<<"1) Si, 0) No) ";
+        cin>>ban;
+    }
+    history= history + "La compra fue realizada por el usuario con identificacion: " + usuario + "\nEl monto pagado fue de " + int2str(precio) + "\nEl pedido fue entrgado en la sala: " + silla[0] + " asiento: " +silla[1];
+    g_reporte(history);
+    cout<<endl<<"Gracias por su compra"<<endl<<endl<<"Lo esperamos pronto";
 }
+void g_reporte(string hist){
+// Recibe un string con la compra realizada por el usuario y lo añade en otro .txt con las demas compras
+    string fecha,datos=leer_Txt("reporte.txt");
+    time_t now= time(0);
+    tm *time= localtime(&now);
+    fecha=int2str(time->tm_mday)+ "/" + int2str(time->tm_mon+1) + '/' + int2str(1900+time->tm_year);
+    fecha=fecha + "   " + int2str(time->tm_hour) + ':' + int2str(time->tm_min) + ':' + int2str(time->tm_sec) + '\n';
+    fecha=datos + fecha + hist + "\n\n";
+    escribir_txt((fecha),"reporte.txt");
+}
+
 void registrar_usuario(){
 // Registrar nuevos usuarios en otro .txt
     map <string,string> users;
@@ -447,4 +552,17 @@ void c_combo(map <int,combo> &com,map <int,producto> inv){
     m_inventario(inv);
     b.create(inv);
     com.insert(pair<int,combo>(num,b));
+}
+void producto::s_produc(int num){
+    cost-=num*(cost/(((cant-1)*u_producto)+u_paquete));
+    u_paquete-=num;
+    if (num>u_paquete){
+        u_paquete=u_producto+u_paquete;
+        cant--;
+    }
+    if(u_paquete==0){
+        u_paquete=u_producto;
+        cant--;
+    }
+    disponible=((u_producto-1)*cant)+u_paquete;
 }
